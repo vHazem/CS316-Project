@@ -20,7 +20,7 @@ Our analysis uses two Kaggle datasets:
 ## 🔬 Methods
 
 1. **Data Analysis**: Correlation analysis, sectoral breakdown, and geographic trends
-2. **Machine Learning**: Random Forest model achieved 95% accuracy in predicting waste
+2. **Machine Learning**: Random Forest model achieved 95% R² in predicting waste
 
 ## 📈 Key Findings
 
