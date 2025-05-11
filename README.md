@@ -39,7 +39,7 @@ Our analysis uses two Kaggle datasets:
 ## 🚦 How to Run
 
 ```bash
-git clone https://github.com/yourusername/food-waste-reduction.git
+git clone https://github.com/vHazem/CS316-Project.git
 pip install -r requirements.txt
 streamlit run app.py
 ```
