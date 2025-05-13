@@ -16,7 +16,11 @@ from sklearn.svm import SVR
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
-#
+# Advanced libraries - comment out if causing issues
+# import shap
+# import joblib
+
+# Page configuration
 st.set_page_config(
     page_title="Food Waste Analytics Dashboard",
     page_icon="🌍",
@@ -339,7 +343,7 @@ def generate_insights(data):
 
 # Main app
 def main():
-    # Load data and model
+    # Load data
     data = load_data()
     
     # Sidebar
@@ -352,7 +356,7 @@ def main():
     )
     
     # Features for modeling
-    features = ["Avg Waste per Capita (Kg)", "Economic Loss (Million $)"]
+    features = ["Economic Loss (Million $)", "Avg Waste per Capita (Kg)"]
     target = "Total Waste (Tons)"
     
     X = data[features]
@@ -726,13 +730,25 @@ def main():
                 feature_name = X.columns[0]  # First feature is used for univariate
                 
                 # Single input for univariate model
+                # Determine max value based on feature type
+                if "Capita" in feature_name:
+                    max_val = 500.0
+                else:
+                    max_val = float(data[feature_name].max()) * 1.2
+
+                # Get a safe default value
+                default_val = float(country_data[feature_name].mean()) if not country_data.empty else 100.0
+                default_val = min(default_val, max_val)
+
+                # Number input
                 feature_value = st.number_input(
                     f"{feature_name}", 
-                    value=float(country_data[feature_name].mean()) if not country_data.empty else 100.0,
+                    value=default_val,
                     min_value=0.0,
-                    max_value=500.0,
+                    max_value=max_val,
                     step=1.0
                 )
+
                 
                 # Create input for prediction
                 input_data = np.array([[feature_value]])
@@ -763,13 +779,27 @@ def main():
                 input_values = {}
                 
                 for feature in X.columns:
+    # Dynamic max value
+                    if "Capita" in feature:
+                        max_val = 500.0
+                        step_val = 1.0
+                    else:
+                        max_val = float(data[feature].max()) * 1.2
+                        step_val = 10.0
+
+                    # Safe default value
+                    default_val = float(country_data[feature].mean()) if not country_data.empty else 100.0
+                    default_val = min(default_val, max_val)
+
+                    # Number input
                     input_values[feature] = st.number_input(
                         f"{feature}", 
-                        value=float(country_data[feature].mean()) if not country_data.empty else 100.0,
+                        value=default_val,
                         min_value=0.0,
-                        max_value=500.0 if "Capita" in feature else 100000.0,
-                        step=1.0 if "Capita" in feature else 10.0
+                        max_value=max_val,
+                        step=step_val
                     )
+
                 
                 # Create input DataFrame for prediction
                 input_data = pd.DataFrame([input_values])
